@@ -36,21 +36,13 @@ class Zone:
         self.corner2 = corner2
         self.inhabitants = []
 
-    def add_inhabitants(self, inhabitan):
-        self.inhabitants.append(self)
-
+    @property
     def population(self):
         return len(self.inhabitants)
-
-    @classmethod
-    def initialize_zones(cls):
-        for latitude in range (cls.MIN_LATITUDE_DEGREES, cls.MAX_LATITUDE_DEGREES, cls.HEIGHT_DEGREES):
-            for longitude in range(cls.MIN_LONGITUDE_DEGREES, cls.MAX_LONGITUDE_DEGREES, cls.WIDTH_DEGREES):
-                bottom_left_corner = Position(longitude, latitude)
-                top_right_corner = Position(longitude + cls.WIDTH_DEGREES, latitude + cls.HEIGHT_DEGREES)
-                zone = Zone(bottom_left_corner, top_right_corner)
-                cls.ZONES.append(zone)
-
+        
+    def add_inhabitants(self, inhabitan):
+        self.inhabitants.append(self)
+    
     def contrains(self, position):
         return position.longitude >= min(self.corner1.longitude,self.corner2.longitude) and \
             position.longitude < max(self.corner1.longitude,self.corner2.longitude) and \
@@ -66,11 +58,17 @@ class Zone:
 
         zone = cls.ZONES[zone_index]
         assert zone.contrains(position)
+        
         return zone
 
-    @property
-    def population(self):
-        return len(self.inhabitants)
+    @classmethod
+    def initialize_zones(cls):
+        for latitude in range (cls.MIN_LATITUDE_DEGREES, cls.MAX_LATITUDE_DEGREES, cls.HEIGHT_DEGREES):
+            for longitude in range(cls.MIN_LONGITUDE_DEGREES, cls.MAX_LONGITUDE_DEGREES, cls.WIDTH_DEGREES):
+                bottom_left_corner = Position(longitude, latitude)
+                top_right_corner = Position(longitude + cls.WIDTH_DEGREES, latitude + cls.HEIGHT_DEGREES)
+                zone = Zone(bottom_left_corner, top_right_corner)
+                cls.ZONES.append(zone)
 
 def main():
     Zone.initialize_zones()
