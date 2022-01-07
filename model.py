@@ -34,7 +34,13 @@ class Zone:
     def __init__(self, corner1, corner2):
         self.corner1 = corner1
         self.corner2 = corner2
-        self.inhabitants = 0
+        self.inhabitants = []
+
+    def add_inhabitants(self, inhabitan):
+        self.inhabitants.append(self)
+
+    def population(self):
+        return len(self.inhabitants)
 
     @classmethod
     def initialize_zones(cls):
@@ -46,10 +52,25 @@ class Zone:
                 cls.ZONES.append(zone)
 
     def contrains(self, position):
+        return position.longitude >= min(self.corner1.longitude,self.corner2.longitude) and \
+            position.longitude < max(self.corner1.longitude,self.corner2.longitude) and \
+            position.longitude >= min(self.corner1.latitude,self.corner2.latitude) and \
+            position.longitude < max(self.corner1.latitude,self.corner2.latitude)
 
     @classmethod
-    def find_zone_that_contrains(cls):
+    def find_zone_that_contrains(cls, position):
+        longitude_index = int((position.longitude_degrees - cls.MIN_LONGITUDE_DEGREES)/ cls.WIDTH_DEGREES)
+        latitude_index = int((position.latitude_degrees - cls.MIN_LATITUDE_DEGREES)/ cls.HEIGHT_DEGREES)
+        longitude_bins = int((cls.MAX_LONGITUDE_DEGREES - cls.MIN_LONGITUDE_DEGREES) / cls.WIDTH_DEGREES)
+        zone_index = latitude_index * longitude_bins + longitude_index
 
+        zone = cls.ZONES[zone_index]
+        assert zone.contrains(position)
+        return zone
+
+    @property
+    def population(self):
+        return len(self.inhabitants)
 
 def main():
     Zone.initialize_zones()
@@ -58,5 +79,8 @@ def main():
         longitude = agent_attributes.pop("longitude")
         position = Position(latitude, longitude)
         agent = Agent(position, **agent_attributes)
+        zone = Zone.find_zone_that_contrains(position)
+        zone.add_inhabitant(agent)
+        print("Zone population: ", zone.population)
 
 main()
