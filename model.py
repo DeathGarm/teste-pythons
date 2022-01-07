@@ -63,6 +63,7 @@ class Zone:
 
     @classmethod
     def initialize_zones(cls):
+        cls.ZONES = []
         for latitude in range (cls.MIN_LATITUDE_DEGREES, cls.MAX_LATITUDE_DEGREES, cls.HEIGHT_DEGREES):
             for longitude in range(cls.MIN_LONGITUDE_DEGREES, cls.MAX_LONGITUDE_DEGREES, cls.WIDTH_DEGREES):
                 bottom_left_corner = Position(longitude, latitude)
